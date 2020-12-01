@@ -8,20 +8,36 @@ int main(void)
     printf("allocation Unit Test\n");
     struct CIADataStruct CIAData1;
     struct allocationParameters parameters1;
+    unsigned char MTQ[10][4];
 
     parameters1.command = 0.4 * maxMoment;
     parameters1.whichMag = 1;
     allocation(&parameters1, &CIAData1);
+    for (int i = 0; i < 10; i++) {
+        MTQ[0][i] = CIAData1.posXlead1[i];
+        MTQ[1][i] = CIAData1.posXlead2[i];
+        MTQ[2][i] = CIAData1.negXlead1[i];
+        MTQ[3][i] = CIAData1.negXlead2[i];
+        MTQ[4][i] = CIAData1.posYlead1[i];
+        MTQ[5][i] = CIAData1.posYlead2[i];
+        MTQ[6][i] = CIAData1.negYlead1[i];
+        MTQ[7][i] = CIAData1.negYlead2[i];
+        MTQ[8][i] = CIAData1.posZlead1[i];
+        MTQ[9][i] = CIAData1.posZlead2[i];
+    }
+    // 0 = posXlead1, 1 = posXlead 2, 2 = negXlead 1,.....
+    for (int i = 0; i < 10; i+=2) {
+        printf("lead%d[0] = %d, should be %d\n",i, (int) MTQ[i][0], 0); // 0
+        printf("lead%d[1] = %d, should be %d\n",i, (int) MTQ[i][1], 0); // 0
+        printf("lead%d[2] = %d, should be %d\n",i, (int) MTQ[i][2], 102); // 102
+        printf("lead%d[3] = %d, should be %d\n",i, (int) MTQ[i][3], 6); // 6
 
-    printf("posXlead1[0] = %d, should be %d\n", (int) CIAData1.posXlead1[0], 0); // 0
-    printf("posXlead1[1] = %d, should be %d\n", (int) CIAData1.posXlead1[1], 0); // 0
-    printf("posXlead1[2] = %d, should be %d\n", (int) CIAData1.posXlead1[2], 102); // 102
-    printf("posXlead1[3] = %d, should be %d\n", (int) CIAData1.posXlead1[3], 6); // 6
+        printf("lead%d[0] = %d, should be %d\n",i+1, (int) MTQ[i+1][0], 0); // 0
+        printf("lead%d[1] = %d, should be %d\n",i+1, (int) MTQ[i+1][1], 0); // 0
+        printf("lead%d[2] = %d, should be %d\n",i+1, (int) MTQ[i+1][2], 0); // 0
+        printf("lead%d[3] = %d, should be %d\n",i+1, (int) MTQ[i+1][3], 16); // 16
+    }
 
-    printf("posXlead2[0] = %d, should be %d\n", (int) CIAData1.posXlead2[0], 0); // 0
-    printf("posXlead2[1] = %d, should be %d\n", (int) CIAData1.posXlead2[1], 0); // 0
-    printf("posXlead2[2] = %d, should be %d\n", (int) CIAData1.posXlead2[2], 0); // 0
-    printf("posXlead2[3] = %d, should be %d\n", (int) CIAData1.posXlead2[3], 16); // 16
     printf("\n");
 
     /// allocation "full on" edge case

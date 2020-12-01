@@ -44,11 +44,17 @@ void setMags(struct setMagsParameters *parameters,
         firstMag = 2*i + 1;
         command = parameters->commands[i];
         posMagWorking = parameters->magStatus[2*i];
-        negMagWorking = parameters->magStatus[2*i+1];
+        if(i == 2) {
+            negMagWorking = false;
+        } else {
+            negMagWorking = parameters->magStatus[2 * i + 1];
+        }
 
         // if both mags are working
         if (posMagWorking && negMagWorking) {
             posParam.command = command/2;
+            // differentiation for pos/neg MTQ is here. Taylor 11/13 4:48 #CIA, see Worklog MTQ
+            // dipole data is flipped properly for the Negative MTQ
             negParam.command = -command/2;
             posParam.whichMag = firstMag;
             negParam.whichMag = firstMag + 1;
@@ -67,6 +73,8 @@ void setMags(struct setMagsParameters *parameters,
 
         // if negative mag works
         } else if (negMagWorking) {
+            // differentiation for pos/neg MTQ is here. Taylor 11/13 4:48 #CIA, see Worklog MTQ
+            // dipole data is flipped properly for the Negative MTQ
             negParam.command = -command;
             negParam.whichMag = firstMag + 1;
             allocation(&negParam, CIAData);

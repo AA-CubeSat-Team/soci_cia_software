@@ -32,8 +32,8 @@ void allocation(struct allocationParameters *parameters, struct CIADataStruct *C
     if(onLead[3] >= 16) {
         onLead[1] = 16;
         onLead[3] = 0;
-    } else if (onLead[2] == 0 && onLead[3] == 0) {
-        onLead[3] = 16;
+    } else if (onLead[2] == 0 && onLead[3] == 0) { // offstart are 0, meaning all off in this case, delay<offstart and
+        onLead[3] = 16;                        // delay >= 0, so delay = 0, so (0,0,0,0) is input, change to (0,0,0,16).
     }
 
     // assign powered and non-powered leads based off command direction
