@@ -44,6 +44,8 @@ void setMags(struct setMagsParameters *parameters,
         firstMag = 2*i + 1;
         command = parameters->commands[i];
         posMagWorking = parameters->magStatus[2*i];
+
+        // the case when configuring z axis MTQ
         if(i == 2) {
             negMagWorking = false;
         } else {

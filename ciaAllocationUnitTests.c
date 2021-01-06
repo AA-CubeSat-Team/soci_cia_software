@@ -1,260 +1,349 @@
 #include "ciaAllocation.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 // ciaAllocationUnitTests: Prints to the terminal predicted outputs and actual
 // outputs for both functions, setMags and allocation.
 int main(void)
 {
     /// allocation middle case
+    printf("\n");
     printf("allocation Unit Test\n");
+    printf("This section will test each MTQ twice with different values to varify the stable-ness of the code.\n");
+    printf("Momentum we are generate in each test is completely random.\n");
+    printf("\n");
     struct CIADataStruct CIAData1;
     struct allocationParameters parameters1;
     unsigned char MTQ[10][4];
 
-    parameters1.command = 0.4 * maxMoment;
-    parameters1.whichMag = 1;
-    allocation(&parameters1, &CIAData1);
-    for (int i = 0; i < 10; i++) {
-        MTQ[0][i] = CIAData1.posXlead1[i];
-        MTQ[1][i] = CIAData1.posXlead2[i];
-        MTQ[2][i] = CIAData1.negXlead1[i];
-        MTQ[3][i] = CIAData1.negXlead2[i];
-        MTQ[4][i] = CIAData1.posYlead1[i];
-        MTQ[5][i] = CIAData1.posYlead2[i];
-        MTQ[6][i] = CIAData1.negYlead1[i];
-        MTQ[7][i] = CIAData1.negYlead2[i];
-        MTQ[8][i] = CIAData1.posZlead1[i];
-        MTQ[9][i] = CIAData1.posZlead2[i];
-    }
-    // 0 = posXlead1, 1 = posXlead 2, 2 = negXlead 1,.....
-    for (int i = 0; i < 10; i+=2) {
-        printf("lead%d[0] = %d, should be %d\n",i, (int) MTQ[i][0], 0); // 0
-        printf("lead%d[1] = %d, should be %d\n",i, (int) MTQ[i][1], 0); // 0
-        printf("lead%d[2] = %d, should be %d\n",i, (int) MTQ[i][2], 102); // 102
-        printf("lead%d[3] = %d, should be %d\n",i, (int) MTQ[i][3], 6); // 6
+    for (int k = 0; k < 2; k++) {
 
-        printf("lead%d[0] = %d, should be %d\n",i+1, (int) MTQ[i+1][0], 0); // 0
-        printf("lead%d[1] = %d, should be %d\n",i+1, (int) MTQ[i+1][1], 0); // 0
-        printf("lead%d[2] = %d, should be %d\n",i+1, (int) MTQ[i+1][2], 0); // 0
-        printf("lead%d[3] = %d, should be %d\n",i+1, (int) MTQ[i+1][3], 16); // 16
-    }
+        if(k == 1) {
+                printf("Round 2 starts now.\n");
+                printf("\n");
+        }
 
+        for (int i = 0; i < 5; i++) {
+            
+            // robust test by using random float points
+            float x = (float)rand() / ((float)RAND_MAX);
+            float y = (float)rand() / ((float)RAND_MAX);
+            
+            if(y <= 0.5) {
+                x = -x;
+            }
+
+            parameters1.command =  x * maxMoment;
+            parameters1.whichMag = i + 1;
+            allocation(&parameters1, &CIAData1);
+
+            // compute correct value
+            int test = round(x * cycleLength);
+            if (test <= 0) {
+                test = -1 * test;
+            }
+
+            // first value is lead number, second value is the readings of each lead
+            for (int j = 0; j < 4; j++) {
+                MTQ[0][j] = CIAData1.posXlead1[j];
+                MTQ[1][j] = CIAData1.posXlead2[j];
+                MTQ[2][j] = CIAData1.negXlead1[j];
+                MTQ[3][j] = CIAData1.negXlead2[j];
+                MTQ[4][j] = CIAData1.posYlead1[j];
+                MTQ[5][j] = CIAData1.posYlead2[j];
+                MTQ[6][j] = CIAData1.negYlead1[j];
+                MTQ[7][j] = CIAData1.negYlead2[j];
+                MTQ[8][j] = CIAData1.posZlead1[j];
+                MTQ[9][j] = CIAData1.posZlead2[j];
+            }
+
+            // 0 = posXlead1, 1 = posXlead 2, 2 = negXlead 1,.....
+            printf("testing for MTQ %d\n", i);
+            printf("ramdom float in this test is %e\n", x);
+            printf("test variable in this test is %d\n", test);
+            if (parameters1.command >= 0) {
+                printf("lead1[0] = %d, should be %d\n", (int) MTQ[2*i][0], 0);
+                printf("lead1[1] = %d, should be %d\n", (int) MTQ[2*i][1], 0);
+                printf("lead1[2] = %d, should be %d\n", (int) MTQ[2*i][2], test % separateBytes);
+                printf("lead1[3] = %d, should be %d\n", (int) MTQ[2*i][3], test / separateBytes);
+                printf("lead2[0] = %d, should be %d\n", (int) MTQ[2*i+1][0], 0);
+                printf("lead2[1] = %d, should be %d\n", (int) MTQ[2*i+1][1], 0);
+                printf("lead2[2] = %d, should be %d\n", (int) MTQ[2*i+1][2], 0);
+                printf("lead2[3] = %d, should be %d\n", (int) MTQ[2*i+1][3], 16);
+            } else {
+                printf("lead1[0] = %d, should be %d\n", (int) MTQ[2*i][0], 0); 
+                printf("lead1[1] = %d, should be %d\n", (int) MTQ[2*i][1], 0); 
+                printf("lead1[2] = %d, should be %d\n", (int) MTQ[2*i][2], 0); 
+                printf("lead1[3] = %d, should be %d\n", (int) MTQ[2*i][3], 16); 
+                printf("lead2[0] = %d, should be %d\n", (int) MTQ[2*i+1][0], 0); 
+                printf("lead2[1] = %d, should be %d\n", (int) MTQ[2*i+1][1], 0); 
+                printf("lead2[2] = %d, should be %d\n", (int) MTQ[2*i+1][2], test % separateBytes); 
+                printf("lead2[3] = %d, should be %d\n", (int) MTQ[2*i+1][3], test / separateBytes); 
+            }
+            printf("\n");
+        }
+    }
+    
     printf("\n");
 
     /// allocation "full on" edge case
     printf("allocation \"Full On\"\n");
-
-    parameters1.command = 1.0 * maxMoment;
-    parameters1.whichMag = 2;
-    allocation(&parameters1, &CIAData1);
-
-    printf("negXlead1[0] = %d, should be %d\n", (int) CIAData1.negXlead1[0], 0); // 0
-    printf("negXlead1[1] = %d, should be %d\n", (int) CIAData1.negXlead1[1], 16); // 16
-    printf("negXlead1[2] = %d, should be %d\n", (int) CIAData1.negXlead1[2], 0); // 0
-    printf("negXlead1[3] = %d, should be %d\n", (int) CIAData1.negXlead1[3], 0); // 0
-
-    printf("negXlead2[0] = %d, should be %d\n", (int) CIAData1.negXlead2[0], 0); // 0
-    printf("negXlead2[1] = %d, should be %d\n", (int) CIAData1.negXlead2[1], 0); // 0
-    printf("negXlead2[2] = %d, should be %d\n", (int) CIAData1.negXlead2[2], 0); // 0
-    printf("negXlead2[3] = %d, should be %d\n", (int) CIAData1.negXlead2[3], 16); // 16
+    printf("assign positive or negative max moment to each leads of each MTQ to test if full on is robust.\n");
     printf("\n");
 
+    for (int n = 0; n < 2; n++) {
+        if (n == 0) {
+            printf("positive full on test starts now.\n");
+            printf("\n");
+        } else {
+            printf("negative full on test starts now.\n");
+            printf("\n");
+        }
+        
+        
+        for (int i = 0; i < 5; i++) {
+
+            if(n == 0) {
+                parameters1.command = maxMoment;
+            } else {
+                parameters1.command = -1.0 * maxMoment;
+            }
+            parameters1.whichMag = i + 1;
+            allocation(&parameters1, &CIAData1);
+
+            for (int j = 0; j < 4; j++) {
+                    MTQ[0][j] = CIAData1.posXlead1[j];
+                    MTQ[1][j] = CIAData1.posXlead2[j];
+                    MTQ[2][j] = CIAData1.negXlead1[j];
+                    MTQ[3][j] = CIAData1.negXlead2[j];
+                    MTQ[4][j] = CIAData1.posYlead1[j];
+                    MTQ[5][j] = CIAData1.posYlead2[j];
+                    MTQ[6][j] = CIAData1.negYlead1[j];
+                    MTQ[7][j] = CIAData1.negYlead2[j];
+                    MTQ[8][j] = CIAData1.posZlead1[j];
+                    MTQ[9][j] = CIAData1.posZlead2[j];
+            }
+
+            printf("testing for MTQ %d\n", i);
+
+            if (parameters1.command >= 0) {
+                printf("lead1[0] = %d, should be %d\n", (int) MTQ[2*i][0], 0);
+                printf("lead1[1] = %d, should be %d\n", (int) MTQ[2*i][1], 16);
+                printf("lead1[2] = %d, should be %d\n", (int) MTQ[2*i][2], 0);
+                printf("lead1[3] = %d, should be %d\n", (int) MTQ[2*i][3], 0);
+                printf("lead2[0] = %d, should be %d\n", (int) MTQ[2*i+1][0], 0);
+                printf("lead2[1] = %d, should be %d\n", (int) MTQ[2*i+1][1], 0);
+                printf("lead2[2] = %d, should be %d\n", (int) MTQ[2*i+1][2], 0);
+                printf("lead2[3] = %d, should be %d\n", (int) MTQ[2*i+1][3], 16);
+            } else {
+                printf("lead1[0] = %d, should be %d\n", (int) MTQ[2*i][0], 0); 
+                printf("lead1[1] = %d, should be %d\n", (int) MTQ[2*i][1], 0); 
+                printf("lead1[2] = %d, should be %d\n", (int) MTQ[2*i][2], 0); 
+                printf("lead1[3] = %d, should be %d\n", (int) MTQ[2*i][3], 16); 
+                printf("lead2[0] = %d, should be %d\n", (int) MTQ[2*i+1][0], 0); 
+                printf("lead2[1] = %d, should be %d\n", (int) MTQ[2*i+1][1], 16); 
+                printf("lead2[2] = %d, should be %d\n", (int) MTQ[2*i+1][2], 0); 
+                printf("lead2[3] = %d, should be %d\n", (int) MTQ[2*i+1][3], 0); 
+            }
+        
+            printf("\n");
+        }
+    }
+    
     /// allocation "full off" edge case
     printf("allocation \"Full Off\"\n");
-
-    parameters1.command = 0.0 * maxMoment;
-    parameters1.whichMag = 3;
-    allocation(&parameters1, &CIAData1);
-
-    printf("posYlead1[0] = %d, should be %d\n", (int) CIAData1.posYlead1[0], 0); // 0
-    printf("posYlead1[1] = %d, should be %d\n", (int) CIAData1.posYlead1[1], 0); // 0
-    printf("posYlead1[2] = %d, should be %d\n", (int) CIAData1.posYlead1[2], 0); // 0
-    printf("posYlead1[3] = %d, should be %d\n", (int) CIAData1.posYlead1[3], 16); // 16
-
-    printf("posYlead2[0] = %d, should be %d\n", (int) CIAData1.posYlead2[0], 0); // 0
-    printf("posYlead2[1] = %d, should be %d\n", (int) CIAData1.posYlead2[1], 0); // 0
-    printf("posYlead2[2] = %d, should be %d\n", (int) CIAData1.posYlead2[2], 0); // 0
-    printf("posYlead2[3] = %d, should be %d\n", (int) CIAData1.posYlead2[3], 16); // 16
+    printf("assign off to each leads of each MTQ to test if full off is robust.\n");
     printf("\n");
 
-    /// allocation negative case
-    printf("allocation Negative Command\n");
+    for (int i = 0; i < 5; i++) {
+        parameters1.command = 0.0 * maxMoment;
+        parameters1.whichMag = i + 1;
+        allocation(&parameters1, &CIAData1);
 
-    parameters1.command = -0.65 * maxMoment;
-    parameters1.whichMag = 4;
-    allocation(&parameters1, &CIAData1);
+        for (int j = 0; j < 4; j++) {
+            MTQ[0][j] = CIAData1.posXlead1[j];
+            MTQ[1][j] = CIAData1.posXlead2[j];
+            MTQ[2][j] = CIAData1.negXlead1[j];
+            MTQ[3][j] = CIAData1.negXlead2[j];
+            MTQ[4][j] = CIAData1.posYlead1[j];
+            MTQ[5][j] = CIAData1.posYlead2[j];
+            MTQ[6][j] = CIAData1.negYlead1[j];
+            MTQ[7][j] = CIAData1.negYlead2[j];
+            MTQ[8][j] = CIAData1.posZlead1[j];
+            MTQ[9][j] = CIAData1.posZlead2[j];
+        }
 
-    printf("negYlead1[0] = %d, should be %d\n", (int) CIAData1.negYlead1[0], 0); // 0
-    printf("negYlead1[1] = %d, should be %d\n", (int) CIAData1.negYlead1[1], 0); // 0
-    printf("negYlead1[2] = %d, should be %d\n", (int) CIAData1.negYlead1[2], 0); // 0
-    printf("negYlead1[3] = %d, should be %d\n", (int) CIAData1.negYlead1[3], 16); // 16
+        printf("testing for MTQ %d\n", i);
 
-    printf("negYlead2[0] = %d, should be %d\n", (int) CIAData1.negYlead2[0], 0); // 0
-    printf("negYlead2[1] = %d, should be %d\n", (int) CIAData1.negYlead2[1], 0); // 0
-    printf("negYlead2[2] = %d, should be %d\n", (int) CIAData1.negYlead2[2], 102); // 102
-    printf("negYlead2[3] = %d, should be %d\n", (int) CIAData1.negYlead2[3], 10); // 10
+        if (parameters1.command >= 0) {
+            printf("lead1[0] = %d, should be %d\n", (int) MTQ[2*i][0], 0);
+            printf("lead1[1] = %d, should be %d\n", (int) MTQ[2*i][1], 0);
+            printf("lead1[2] = %d, should be %d\n", (int) MTQ[2*i][2], 0);
+            printf("lead1[3] = %d, should be %d\n", (int) MTQ[2*i][3], 16);
+            printf("lead2[0] = %d, should be %d\n", (int) MTQ[2*i+1][0], 0);
+            printf("lead2[1] = %d, should be %d\n", (int) MTQ[2*i+1][1], 0);
+            printf("lead2[2] = %d, should be %d\n", (int) MTQ[2*i+1][2], 0);
+            printf("lead2[3] = %d, should be %d\n", (int) MTQ[2*i+1][3], 16);
+        } else {
+            printf("lead1[0] = %d, should be %d\n", (int) MTQ[2*i][0], 0); 
+            printf("lead1[1] = %d, should be %d\n", (int) MTQ[2*i][1], 0); 
+            printf("lead1[2] = %d, should be %d\n", (int) MTQ[2*i][2], 0); 
+            printf("lead1[3] = %d, should be %d\n", (int) MTQ[2*i][3], 16); 
+            printf("lead2[0] = %d, should be %d\n", (int) MTQ[2*i+1][0], 0); 
+            printf("lead2[1] = %d, should be %d\n", (int) MTQ[2*i+1][1], 0); 
+            printf("lead2[2] = %d, should be %d\n", (int) MTQ[2*i+1][2], 0); 
+            printf("lead2[3] = %d, should be %d\n", (int) MTQ[2*i+1][3], 16); 
+        }
+
+        printf("\n");
+    }
+    
+    /// setMags NEWWWWW
+    printf("setMags Unit Test NEW\n");
+    printf("Positive moment test starts now\n");
     printf("\n");
-
-    /// setMags
-    printf("setMags Unit Test\n");
     struct CIADataStruct CIAData2;
     struct setMagsParameters parameters2;
-    parameters2.commands[0] = 0.4 * maxMoment;
-    parameters2.commands[1] = 0.4 * maxMoment;
-    parameters2.commands[2] = 0.4 * maxMoment;
-    int i;
-    for (i = 0; i < 5; ++i) {
-        parameters2.magStatus[i] = true;
-    }
+    
+    float x;
+    float y;
+    float z;
 
-    setMags(&parameters2, &CIAData2);
+    for (int m = 0; m < 2; m++) {
+        if (m == 0) {
+            x = (float)rand() / ((float)RAND_MAX);
+            y = (float)rand() / ((float)RAND_MAX);
+            z = (float)rand() / ((float)RAND_MAX);
+        } else {
+            printf("Negative moment test starts now\n");
+            printf("\n");
+            x = (float)rand() / ((float)RAND_MAX) - 1;
+            y = (float)rand() / ((float)RAND_MAX) - 1;
+            z = (float)rand() / ((float)RAND_MAX) - 1;
+        }
 
-    // value every powered lead should take on when using example duty cycle
-    // (see allocation)
-    char onLead[] = {0, 0, 102, 6};
+        parameters2.commands[0] = x * maxMoment;
+        parameters2.commands[1] = y * maxMoment;
+        parameters2.commands[2] = z * maxMoment;
+        int i;
+        for (i = 0; i < 5; ++i) {
+            parameters2.magStatus[i] = true;
+        }
 
-    int passedLeads = 0;
-    bool passed;
-    // posXlead1
-    passed = true;
-    for (i = 0; i < 4; ++i) {
-        if (CIAData2.posXlead1[i] != onLead[i]/2){
-            passed = false;
+        setMags(&parameters2, &CIAData2);
+        for (int j = 0; j < 4; j++) {
+            MTQ[0][j] = CIAData2.posXlead1[j];
+            MTQ[1][j] = CIAData2.posXlead2[j];
+            MTQ[2][j] = CIAData2.negXlead1[j];
+            MTQ[3][j] = CIAData2.negXlead2[j];
+            MTQ[4][j] = CIAData2.posYlead1[j];
+            MTQ[5][j] = CIAData2.posYlead2[j];
+            MTQ[6][j] = CIAData2.negYlead1[j];
+            MTQ[7][j] = CIAData2.negYlead2[j];
+            MTQ[8][j] = CIAData2.posZlead1[j];
+            MTQ[9][j] = CIAData2.posZlead2[j];
+        }
+
+        int test = abs(round(x * cycleLength));
+
+        // correct value for onlead
+        char onLeadx[] = {0, 0, (int) round(abs(x * cycleLength / 2)) % separateBytes, round(abs(x * cycleLength) / 2 / separateBytes)};
+        char onLeady[] = {0, 0, (int) abs(round(y * cycleLength / 2)) % separateBytes, round(abs(y * cycleLength) / 2 / separateBytes)};
+        char onLeadz[] = {0, 0, abs(round(z * cycleLength)) % separateBytes, abs(round(z * cycleLength)) / separateBytes};
+        unsigned char onLead[3][4];
+
+        for (int i = 0; i < 3; i++) {
+            if (i == 0) {
+                for (int j = 0; j < 4; j++) {
+                    onLead[0][j] = onLeadx[j];
+                }
+            } else if (i == 1) {
+                for (int j = 0; j < 4; j++) {
+                    onLead[1][j] = onLeady[j];
+                }
+            } else {
+                for (int j = 0; j < 4; j++) {
+                    onLead[2][j] = onLeadz[j];
+                }
+            }
+        }
+        
+        if (m == 0) {
+            for (int n = 0; n < 5; n++){
+                if (n == 4) {
+                    printf("testing for MTQ %d\n", n);
+                    printf("lead%d[0] = %d, should be %d\n",2*n, (int) MTQ[2*n][0], onLead[n/2][0]);
+                    printf("lead%d[1] = %d, should be %d\n",2*n, (int) MTQ[2*n][1], onLead[n/2][1]);
+                    printf("lead%d[2] = %d, should be %d\n",2*n, (int) MTQ[2*n][2], onLead[n/2][2]);
+                    printf("lead%d[3] = %d, should be %d\n",2*n, (int) MTQ[2*n][3], onLead[n/2][3]);
+                    printf("lead%d[0] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][0], 0);
+                    printf("lead%d[1] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][1], 0);
+                    printf("lead%d[2] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][2], 0);
+                    printf("lead%d[3] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][3], 16);
+                    printf("\n");
+                } else if (n % 2 == 0){
+                    printf("testing for MTQ %d\n", n);
+                    printf("lead%d[0] = %d, should be %d\n",2*n, (int) MTQ[2*n][0], onLead[n/2][0]);
+                    printf("lead%d[1] = %d, should be %d\n",2*n, (int) MTQ[2*n][1], onLead[n/2][1]);
+                    printf("lead%d[2] = %d, should be %d\n",2*n, (int) MTQ[2*n][2], onLead[n/2][2]);
+                    printf("lead%d[3] = %d, should be %d\n",2*n, (int) MTQ[2*n][3], onLead[n/2][3]);
+                    printf("lead%d[0] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][0], 0);
+                    printf("lead%d[1] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][1], 0);
+                    printf("lead%d[2] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][2], 0);
+                    printf("lead%d[3] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][3], 16);
+                    printf("\n");
+                } else {
+                    printf("testing for MTQ %d\n", n);
+                    printf("lead%d[0] = %d, should be %d\n",2*n, (int) MTQ[2*n][0], 0);
+                    printf("lead%d[1] = %d, should be %d\n",2*n, (int) MTQ[2*n][1], 0);
+                    printf("lead%d[2] = %d, should be %d\n",2*n, (int) MTQ[2*n][2], 0);
+                    printf("lead%d[3] = %d, should be %d\n",2*n, (int) MTQ[2*n][3], 16);
+                    printf("lead%d[0] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][0], onLead[n/2][0]);
+                    printf("lead%d[1] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][1], onLead[n/2][1]);
+                    printf("lead%d[2] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][2], onLead[n/2][2]);
+                    printf("lead%d[3] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][3], onLead[n/2][3]);
+                    printf("\n");
+                }
+            }
+        } else {
+            for (int n = 0; n < 5; n++){
+                if (n == 4) {
+                    printf("testing for MTQ %d\n", n);
+                    printf("lead%d[0] = %d, should be %d\n",2*n, (int) MTQ[2*n][0], 0);
+                    printf("lead%d[1] = %d, should be %d\n",2*n, (int) MTQ[2*n][1], 0);
+                    printf("lead%d[2] = %d, should be %d\n",2*n, (int) MTQ[2*n][2], 0);
+                    printf("lead%d[3] = %d, should be %d\n",2*n, (int) MTQ[2*n][3], 16);
+                    printf("lead%d[0] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][0], onLead[n/2][0]);
+                    printf("lead%d[1] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][1], onLead[n/2][1]);
+                    printf("lead%d[2] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][2], onLead[n/2][2]);
+                    printf("lead%d[3] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][3], onLead[n/2][3]);
+                    printf("\n");
+                } else if (n % 2 == 0){
+                    printf("testing for MTQ %d\n", n);
+                    printf("lead%d[0] = %d, should be %d\n",2*n, (int) MTQ[2*n][0], 0);
+                    printf("lead%d[1] = %d, should be %d\n",2*n, (int) MTQ[2*n][1], 0);
+                    printf("lead%d[2] = %d, should be %d\n",2*n, (int) MTQ[2*n][2], 0);
+                    printf("lead%d[3] = %d, should be %d\n",2*n, (int) MTQ[2*n][3], 16);
+                    printf("lead%d[0] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][0], onLead[n/2][0]);
+                    printf("lead%d[1] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][1], onLead[n/2][1]);
+                    printf("lead%d[2] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][2], onLead[n/2][2]);
+                    printf("lead%d[3] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][3], onLead[n/2][3]);
+                    printf("\n");
+                } else {
+                    printf("testing for MTQ %d\n", n);
+                    printf("lead%d[0] = %d, should be %d\n",2*n, (int) MTQ[2*n][0], onLead[n/2][0]);
+                    printf("lead%d[1] = %d, should be %d\n",2*n, (int) MTQ[2*n][1], onLead[n/2][1]);
+                    printf("lead%d[2] = %d, should be %d\n",2*n, (int) MTQ[2*n][2], onLead[n/2][2]);
+                    printf("lead%d[3] = %d, should be %d\n",2*n, (int) MTQ[2*n][3], onLead[n/2][3]);
+                    printf("lead%d[0] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][0], 0);
+                    printf("lead%d[1] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][1], 0);
+                    printf("lead%d[2] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][2], 0);
+                    printf("lead%d[3] = %d, should be %d\n",2*n+1, (int) MTQ[2*n+1][3], 16);
+                    printf("\n");
+                }
+            }
         }
     }
-    if (passed) {
-        printf("posXlead1 == {0, 0, 51, 3}\n");
-        passedLeads++;
-    } else {
-        printf("posXlead1 != {0, 0, 51, 3}\n");
-    }
 
-    // posXlead2
-    passed = true;
-    for (i = 0; i < 4; ++i) {
-        if (CIAData2.posXlead2[i] != offLead[i]){
-            passed = false;
-        }
-    }
-    if (passed) {
-        printf("posXlead2 == offLead\n");
-        passedLeads++;
-    } else {
-        printf("posXlead2 != offLead\n");
-    }
-
-    // negXlead1
-    passed = true;
-    for (i = 0; i < 4; ++i) {
-        if (CIAData2.negXlead1[i] != offLead[i]){
-            passed = false;
-        }
-    }
-    if (passed) {
-        printf("negXlead1 == offLead\n");
-        passedLeads++;
-    } else {
-        printf("negXlead1 != offLead\n");
-    }
-
-    // negXlead2
-    passed = true;
-    for (i = 0; i < 4; ++i) {
-        if (CIAData2.negXlead2[i] != onLead[i]/2){
-            passed = false;
-        }
-    }
-    if (passed) {
-        printf("negXlead2 == {0, 0, 51, 3}\n");
-        passedLeads++;
-    } else {
-        printf("negXlead2 != {0, 0, 51, 3}\n");
-    }
-
-    // posYlead1
-    passed = true;
-    for (i = 0; i < 4; ++i) {
-        if (CIAData2.posYlead1[i] != onLead[i]/2){
-            passed = false;
-        }
-    }
-    if (passed) {
-        printf("posYlead1 == {0, 0, 51, 3}\n");
-        passedLeads++;
-    } else {
-        printf("posYlead1 != {0, 0, 51, 3}\n");
-    }
-
-    // posYlead2
-    passed = true;
-    for (i = 0; i < 4; ++i) {
-        if (CIAData2.posYlead2[i] != offLead[i]){
-            passed = false;
-        }
-    }
-    if (passed) {
-        printf("posYlead2 == offLead\n");
-        passedLeads++;
-    } else {
-        printf("posYlead2 != offLead\n");
-    }
-
-    // negYlead1
-    passed = true;
-    for (i = 0; i < 4; ++i) {
-        if (CIAData2.negYlead1[i] != offLead[i]){
-            passed = false;
-        }
-    }
-    if (passed) {
-        printf("negYlead1 == offLead\n");
-        passedLeads++;
-    } else {
-        printf("negYlead1 != offLead\n");
-    }
-
-    // negYlead2
-    passed = true;
-    for (i = 0; i < 4; ++i) {
-        if (CIAData2.negYlead2[i] != onLead[i]/2){
-            passed = false;
-        }
-    }
-    if (passed) {
-        printf("negYlead2 == {0, 0, 51, 3}\n");
-        passedLeads++;
-    } else {
-        printf("negYlead2 != {0, 0, 51, 3}\n");
-    }
-
-    // posZlead1
-    passed = true;
-    for (i = 0; i < 4; ++i) {
-        if (CIAData2.posZlead1[i] != onLead[i]){
-            passed = false;
-        }
-    }
-    if (passed) {
-        printf("posZlead1 == {0, 0, 102, 6}\n");
-        passedLeads++;
-    } else {
-        printf("posZlead1 != {0, 0, 102, 6}\n");
-    }
-
-    // posZlead2
-    passed = true;
-    for (i = 0; i < 4; ++i) {
-        if (CIAData2.posZlead2[i] != offLead[i]){
-            passed = false;
-        }
-    }
-    if (passed) {
-        printf("posZlead2 == offLead\n");
-        passedLeads++;
-    } else {
-        printf("posZlead2 != offLead\n");
-    }
-
-    printf("%i out of 10 leads are correct\n", passedLeads);
-
-    return(0);
 }
