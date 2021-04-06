@@ -29,7 +29,7 @@ struct CIADataStruct
     The LEDn_OFF_H output control bit 4, when set to logic 1, causes the output to be
     always OFF. In this case the values in the LEDn_ON registers are ignored.
 
-    Remark: When all LED outputs are configured as ‘always OFF’, the prescale counter and
+    Remark: When all LED outputs are configured as ï¿½always OFFï¿½, the prescale counter and
     all associated PWM cycle timing logic are disabled. If LEDn_ON_H[4] and
     LEDn_OFF_H[4] are set at the same time, the LEDn_OFF_H[4] function takes
     precedence. (pg. 24 of data sheet)
@@ -136,5 +136,8 @@ void setMags(struct setMagsParameters *parameters,
 */
 void allocation(struct allocationParameters *parameters,
                 struct CIADataStruct *CIAData);
+
+
+void writeToI2C(struct CIADataStruct *CIAData);
 
 #endif // CIA_ALLOCATION_H

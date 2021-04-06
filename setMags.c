@@ -95,4 +95,6 @@ void setMags(struct setMagsParameters *parameters,
             }
         }
     }
+
+    writeToI2C(CIAData);
 }
