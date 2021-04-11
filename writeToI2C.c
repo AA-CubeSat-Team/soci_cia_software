@@ -12,16 +12,15 @@ void writeToI2C(struct CIADataStruct *CIAData) {
 
     //posXlead1
     CIAData->beginTransmission(devAddrWrite); //I2C Address
-    CIAData->write(posXlead1Addr[1]; //Pin address (Register Address)
-    CIAData->write(posXlead1[0]);
-    CIAData->write(posXlead1[1]);
-    CIAData->write(posXlead1[2];
-    CIAData->write(posXlead1[3];
+    for (int i = 0; i < 4; i++) {
+        CIAData->write(posXlead1Addr[i]; //Pin address (Register Address)
+        CIAData->write(posXlead1[i]);
+    }
     CIAData->endTransmission();
 
     //posXlead2
     CIAData->beginTransmission(devAddrWrite); //I2C Address
-    CIAData->write(posXlead2Addr[1]; //Pin address (Register Address)
+    CIAData->write(posXlead2Addr[0]; //Pin address (Register Address)
     CIAData->write(posXlead2[0]);
     CIAData->write(posXlead2[1]);
     CIAData->write(posXlead2[2];
