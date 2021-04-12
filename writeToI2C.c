@@ -90,8 +90,8 @@ void writeToI2C(struct CIADataStruct *CIAData) {
     //posZlead2
     CIAData->beginTransmission(devAddrWrite); //I2C Address
                 for (int i = 0; i < 4; i++) {
-        CIAData->write(negYlead2Addr[i]; //Pin address (Register Address)
-        CIAData->write(negYlead2[i]);
+        CIAData->write(posZlead2Addr[i]; //Pin address (Register Address)
+        CIAData->write(posZlead2[i]);
     }
     CIAData->endTransmission();
 }
