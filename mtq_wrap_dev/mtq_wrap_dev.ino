@@ -28,7 +28,6 @@ void loop() {
   {
   setMags(&parameters1, &CIADATA); 
   }
-}
     // Provide values for setMags and CIAData
   for (int i=0; i<3; i++) {
     parameters1.commands[i]= {0.0,1.0,2.0}; //Not sure what to set these to (Wants a double)
@@ -63,5 +62,4 @@ void loop() {
 
     
   delay(1000);
-}
 }
