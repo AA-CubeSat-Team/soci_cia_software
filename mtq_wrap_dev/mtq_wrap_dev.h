@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#define DEV_ADDR_WRITE 142
+
 // CIA data struct: Stores translated magnetic moment commands for each lead of
 // every magnetorquer.
 struct CIADataStruct
@@ -88,9 +90,6 @@ struct setMagsParameters {
 
 // PCA9685 device address with read
 static const unsigned char devAddrRead = 143; // 10001111
-
-// PCA9685 device address with write
-extern char devAddrWrite; // 10001110 .        Writen in .cpp file as 142
 
 // Register addresses for each magnetorquer lead. Each array of addresses has a
 // corresponding array of commands in the "CIADataStruct". As with the

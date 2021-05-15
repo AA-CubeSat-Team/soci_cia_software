@@ -10,7 +10,6 @@ void setMags(struct setMagsParameters *parameters, struct CIADataStruct *CIAData
     struct allocationParameters negParam;
     unsigned char *posLead1[4], *posLead2[4], *negLead1[4], *negLead2[4];
     unsigned char dummyLead[4]; // dummy lead (for -z face that doesn't exist)
-    char devAddrWrite = 142; 
 
     // loops through x mags, y mags, and z mag
     for (i = 0; i < 3; ++i) {
@@ -195,11 +194,10 @@ void writeToI2C(struct CIADataStruct *CIAData) {
     //If this does not work try puting the Wire.endTransmission() inside the for loop
   
     //X-face commands 
-
-    Wire.begin(devAddrWrite);
+    Wire.begin(DEV_ADDR_WRITE);
 
     //posXlead1
-    Wire.beginTransmission(devAddrWrite); //I2C Address
+    Wire.beginTransmission(DEV_ADDR_WRITE); //I2C Address
     for (int i = 0; i < 4; i++) {
       Wire.write(CIAData->posXlead1Addr[i]); //Pin address (Register Address)
       Wire.write(CIAData->posXlead1[i]);
@@ -207,7 +205,7 @@ void writeToI2C(struct CIADataStruct *CIAData) {
     Wire.endTransmission();
 
     //posXlead2
-    Wire.beginTransmission(devAddrWrite); //I2C Address
+    Wire.beginTransmission(DEV_ADDR_WRITE); //I2C Address
     for (int i = 0; i < 4; i++) {
       Wire.write(CIAData->posXlead2Addr[i]); //Pin address (Register Address)
       Wire.write(CIAData->posXlead2[i]);
@@ -215,7 +213,7 @@ void writeToI2C(struct CIADataStruct *CIAData) {
     Wire.endTransmission();
 
     //negXlead1  
-    Wire.beginTransmission(devAddrWrite); //I2C Address
+    Wire.beginTransmission(DEV_ADDR_WRITE); //I2C Address
     for (int i = 0; i < 4; i++) {
       Wire.write(CIAData->negXlead1Addr[i]); //Pin address (Register Address)
       Wire.write(CIAData->negXlead1[i]);
@@ -223,7 +221,7 @@ void writeToI2C(struct CIADataStruct *CIAData) {
     Wire.endTransmission();
 
     //negXlead2
-    Wire.beginTransmission(devAddrWrite); //I2C Address
+    Wire.beginTransmission(DEV_ADDR_WRITE); //I2C Address
     for (int i = 0; i < 4; i++) {
       Wire.write(CIAData->negXlead2Addr[i]); //Pin address (Register Address)
       Wire.write(CIAData->negXlead2[i]);
@@ -233,7 +231,7 @@ void writeToI2C(struct CIADataStruct *CIAData) {
     //Y-face commands   
 
     //posYlead1
-    Wire.beginTransmission(devAddrWrite); //I2C Address
+    Wire.beginTransmission(DEV_ADDR_WRITE); //I2C Address
     for (int i = 0; i < 4; i++) {
       Wire.write(CIAData->posYlead1Addr[i]); //Pin address (Register Address)
       Wire.write(CIAData->posYlead1[i]);
@@ -241,7 +239,7 @@ void writeToI2C(struct CIADataStruct *CIAData) {
     Wire.endTransmission();
 
     //posYlead2
-    Wire.beginTransmission(devAddrWrite); //I2C Address
+    Wire.beginTransmission(DEV_ADDR_WRITE); //I2C Address
     for (int i = 0; i < 4; i++) {
       Wire.write(CIAData->posYlead2Addr[i]); //Pin address (Register Address)
       Wire.write(CIAData->posYlead2[i]);
@@ -249,7 +247,7 @@ void writeToI2C(struct CIADataStruct *CIAData) {
     Wire.endTransmission();
 
     //negYlead1
-    Wire.beginTransmission(devAddrWrite); //I2C Address
+    Wire.beginTransmission(DEV_ADDR_WRITE); //I2C Address
     for (int i = 0; i < 4; i++) {
       Wire.write(CIAData->negYlead1Addr[i]); //Pin address (Register Address)
       Wire.write(CIAData->negYlead1[i]);
@@ -257,7 +255,7 @@ void writeToI2C(struct CIADataStruct *CIAData) {
     Wire.endTransmission();
 
     //negYlead2
-    Wire.beginTransmission(devAddrWrite); //I2C Address
+    Wire.beginTransmission(DEV_ADDR_WRITE); //I2C Address
     for (int i = 0; i < 4; i++) {
       Wire.write(CIAData->negYlead2Addr[i]); //Pin address (Register Address)
       Wire.write(CIAData->negYlead2[i]);
@@ -267,7 +265,7 @@ void writeToI2C(struct CIADataStruct *CIAData) {
     //Z-face commands  
 
     //posZlead1
-    Wire.beginTransmission(devAddrWrite); //I2C Address
+    Wire.beginTransmission(DEV_ADDR_WRITE); //I2C Address
     for (int i = 0; i < 4; i++) {
       Wire.write(CIAData->posZlead1Addr[i]); //Pin address (Register Address)
       Wire.write(CIAData->posZlead1[i]);
@@ -275,7 +273,7 @@ void writeToI2C(struct CIADataStruct *CIAData) {
     Wire.endTransmission();
     
     //posZlead2
-    Wire.beginTransmission(devAddrWrite); //I2C Address
+    Wire.beginTransmission(DEV_ADDR_WRITE); //I2C Address
     for (int i = 0; i < 4; i++) {
       Wire.write(CIAData->posZlead2Addr[i]); //Pin address (Register Address)
       Wire.write(CIAData->posZlead2[i]);
