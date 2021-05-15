@@ -8,59 +8,68 @@
 //Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x47);
 void setMags(struct setMagsParameters *parameters, struct CIADataStruct *CIAData); 
 
-//struct setMagsParameters parameters1;
-//struct CIADataStruct CIAdata;
+unsigned char CommandsInputs[3], MagStatusInputs[5], LeadInputs[4]; //Inputs
+
+// Possible Input Values: 
+//CommandsInputs[3]={0.0,1.0,2.0};
+//MagStatusInputs[5]={0.0,1.0,2.0,3.0,4.0,5.0};
+//LeadInputs[4]={0,1,2,3};
 
 // setMagsParameters takes three double commands and five boolean operational status
-// CIADataStruct takes four commands for each lead
+// CIAdataStruct takes four commands for each lead
 // Have to define inputs for these in this script because it is not in setMags
+
+
+
 
 void setup() {
   Serial.begin(9600);
   Serial.println("MTQ Test");
+struct setMagsParameters parameters1;
+struct CIADataStruct CIAdata;
+  
 //
 }
 
 //setMags calls allocation.c and writeToI2C.c
-/*
+
 void loop() {
   
-    // Provide values for setMags and CIAData
+    // Provide values for setMags and CIAdata
   for (int i=0; i<3; i++) {
-    parameters1->commands[i]= {0.0,1.0,2.0}; //Not sure what to set these to (Wants a double)
+    parameters1.commands[i]= CommandsInputs[i]; //Not sure what to set these to (Wants a double)
   }
   for (int i=0; i<5; i++) {
-    paramaters1->magStatus[i]={0.0,1.0,2.0,3.0,4.0,5.0}; //Also not sure what to set this to (Wants a boolean)
+    paramaters1.magStatus[i]= MagStatusInputs[i]; //Also not sure what to set this to (Wants a boolean)
   }
 
 
   for (int i=0; i<4; i++){ //Specify four char commands for each lead
   // Positive x-face commands
-    CIAData->posXlead1[i]= {0,1,2,3};
-    CIAData->posXlead2[i]= {0,1,2,3};
+    CIAdata.posXlead1[i]= LeadInputs[i];
+    CIAdata.posXlead2[i]= LeadInputs[i];
 
     // negative x-face commands
-    CIAData->negXlead1[i]= {0,1,2,3};
-    CIAData->negXlead2[i]= {0,1,2,3};
+    CIAdata.negXlead1[i]= LeadInputs[i];
+    CIAdata.negXlead2[i]= LeadInputs[i];
 
     // positive y-face commands
-    CIAData->posYlead1[i]= {0,1,2,3};
-    CIAData->posYlead2[i]= {0,1,2,3};
+    CIAdata.posYlead1[i]= LeadInputs[i];
+    CIAdata.posYlead2[i]= LeadInputs[i];
 
     // negative y-face commands
-    CIADatavnegYlead1[i]= {0,1,2,3};
-    CIAData->negYlead2[i]= {0,1,2,3};
+    CIAdatavnegYlead1[i]= LeadInputs[i];
+    CIAdata.negYlead2[i]= LeadInputs[i];
 
     // positive z-face commands
-    CIAData->posZlead1[i]= {0,1,2,3};
-    CIAData->posZlead2[i]= {0,1,2,3};
+    CIAdata.posZlead1[i]= LeadInputs[i];
+    CIAdata.posZlead2[i]= LeadInputs[i];
   }
 
-  setMags(&parameters1, &CIAData);
+  setMags(&parameters, &CIAdata);
 
   
 
     
   delay(1000);
 }
-*/
