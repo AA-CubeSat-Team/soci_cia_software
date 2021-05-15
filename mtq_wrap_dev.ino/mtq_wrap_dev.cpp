@@ -1,4 +1,5 @@
-#include "mtq_wrap_dev.h"
+//#include "mtq_wrap_dev.h"
+#include "ciaAllocation.h"
 #include <Wire.h>
 
 void setMags(struct setMagsParameters *parameters, struct CIADataStruct *CIAData) {
@@ -10,7 +11,6 @@ void setMags(struct setMagsParameters *parameters, struct CIADataStruct *CIAData
     struct allocationParameters negParam;
     unsigned char *posLead1[4], *posLead2[4], *negLead1[4], *negLead2[4];
     unsigned char dummyLead[4]; // dummy lead (for -z face that doesn't exist)
-    char devAddrWrite = 142; 
 
     // loops through x mags, y mags, and z mag
     for (i = 0; i < 3; ++i) {
@@ -191,8 +191,6 @@ void allocation(struct allocationParameters *parameters, struct CIADataStruct *C
 
 
 void writeToI2C(struct CIADataStruct *CIAData) {
-
-    //If this does not work try puting the Wire.endTransmission() inside the for loop
   
     //X-face commands 
 

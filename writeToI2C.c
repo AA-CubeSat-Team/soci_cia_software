@@ -10,10 +10,10 @@ void writeToI2C(struct CIADataStruct *CIAData) {
 
     //X-face commands 
 
-    Wire.begin(CIAData->devAddrWrite)
+    Wire.begin()
 
     //posXlead1
-    Wire.beginTransmission(devAddrWrite); //I2C Address
+    Wire.beginTransmission(CIAData->devAddrWrite); //I2C Address
     for (int i = 0; i < 4; i++) {
         Wire.write(CIAData->posXlead1Addr[i]); //Pin address (Register Address)
         Wire.write(CIAData->posXlead1[i]);
