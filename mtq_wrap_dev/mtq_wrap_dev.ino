@@ -6,12 +6,12 @@
 //#include <Adafruit_PWMServoDriver.h>
 
 //Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x47);
-unsigned char CommandsInputs[3], MagStatusInputs[5], LeadInputs[4]; //Inputs
+unsigned char CommandsInputs[3], MagStatusInputs[5]; //Inputs
 
 // Possible Input Values: 
 //CommandsInputs[3]={0.0,1.0,2.0};
 //MagStatusInputs[5]={0.0,1.0,2.0,3.0,4.0,5.0};
-//LeadInputs[4]={0,1,2,3};
+//LeadInputs[4]={0,1,2,3}; (Ignore LeadInputs, SetMags already takes care of this)
 
 // setMagsParameters takes three double commands and five boolean operational status
 // CIAdataStruct takes four commands for each lead
