@@ -21,10 +21,10 @@ void writeToI2C(struct CIADataStruct *CIAData) {
     Wire.endTransmission();
 
     //posXlead2
-    CIAData->beginTransmission(devAddrWrite); //I2C Address
-        for (int i = 0; i < 4; i++) {
-        CIAData->write(CIAData->posXlead2Addr[i]); //Pin address (Register Address)
-        CIAData->write(CIAData->posXlead2[i]);
+    Wire.beginTransmission(CIAData->devAddrWrite); //I2C Address
+    for (int i = 0; i < 4; i++) {
+        Wire.write(CIAData->posXlead2Addr[i]); //Pin address (Register Address)
+        Wire.write(CIAData->posXlead2[i]);
     }
     Wire.endTransmission();
 
